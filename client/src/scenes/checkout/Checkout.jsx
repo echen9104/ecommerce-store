@@ -9,8 +9,7 @@ import Shipping from "./Shipping";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(
-  "pk_test_51LgU7yConHioZHhlAcZdfDAnV9643a7N1CMpxlKtzI1AUWLsRyrord79GYzZQ6m8RzVnVQaHsgbvN1qSpiDegoPi006QkO0Mlc"
-);
+  "pk_live_51MqiBfHylEoLc7n2z8vgxxO6WOZPfwG4da5bdzy2FpE8ET3o5oqlDZ611SzISf3MufaBRmrmdtVEI0VxfV53HPDI00vw6AcvkU");
 
 const Checkout = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -39,7 +38,7 @@ const Checkout = () => {
   async function makePayment(values) {
     const stripe = await stripePromise;
     const requestBody = {
-      userName: [values.firstName, values.lastName].join(" "),
+      userName: [values.shippingAddress.firstName, values.shippingAddress.lastName].join(" "),
       email: values.email,
       products: cart.map(({ id, count }) => ({
         id,
@@ -47,12 +46,15 @@ const Checkout = () => {
       })),
     };
 
-    const response = await fetch("http://localhost:3000/api/orders", {
+    const response = await fetch("http://localhost:1337/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
     });
+    console.log(response)
+    
     const session = await response.json();
+
     await stripe.redirectToCheckout({
       sessionId: session.id,
     });
@@ -72,7 +74,7 @@ const Checkout = () => {
         <Formik
           onSubmit={handleFormSubmit}
           initialValues={initialValues}
-          validationSchema={null}
+          validationSchema={checkoutSchema[activeStep]}
         >
           {({
             values,

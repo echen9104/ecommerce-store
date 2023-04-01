@@ -30,7 +30,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
           };
         })
       );
-
+      console.log('1')
       // create a stripe session
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -41,11 +41,13 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         line_items: lineItems,
       });
 
+      console.log('2')
       // create the item
       await strapi
         .service("api::order.order")
         .create({ data: { userName, products, stripeSessionId: session.id } });
 
+      console.log('3')
       // return the session id
       return { id: session.id };
     } catch (error) {
