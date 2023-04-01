@@ -9,7 +9,8 @@ import Shipping from "./Shipping";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(
-  "pk_live_51MqiBfHylEoLc7n2z8vgxxO6WOZPfwG4da5bdzy2FpE8ET3o5oqlDZ611SzISf3MufaBRmrmdtVEI0VxfV53HPDI00vw6AcvkU");
+  "pk_test_51MqiBfHylEoLc7n2cd5xsez23m7yHKYjZw8boXPq7tliXgmy665TICvnoGWiFko5UN5bvXQrnxVMchxZDXIuvFWg00cmIRmrFF"
+);
 
 const Checkout = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -19,7 +20,7 @@ const Checkout = () => {
 
   const handleFormSubmit = async (values, actions) => {
     setActiveStep(activeStep + 1);
-
+    
     // this copies the billing address onto shipping address
     if (isFirstStep && values.shippingAddress.isSameAddress) {
       actions.setFieldValue("shippingAddress", {
@@ -51,7 +52,6 @@ const Checkout = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
     });
-    console.log(response)
     
     const session = await response.json();
 
